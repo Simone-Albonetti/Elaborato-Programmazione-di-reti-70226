@@ -18,3 +18,4 @@ while True:
     # invia le misurazioni al gateway
     time.sleep(86400) #Per provare se funziona effettivamente ridurre il tempo di sleep
     dev1.InviaMessaggio()
+    

@@ -37,7 +37,7 @@ class Gateway:
         while (len(misurazioni) != 4):
             # Anche qui si è scelto come nel buffer della socket del server 
             # di utilizzare un buffer piccolo poichè vengono trasferiti pochi dati
-            # alla volta e il rischi di riempire il buffer è molto basso
+            # alla volta e il rischio di riempire il buffer è molto basso
             
             data, address = self.gatewayUDP.recvfrom(1024)
             risposta = "Misurazioni arrivate al gateway"
@@ -69,18 +69,14 @@ class Gateway:
             
             #Le misurazioni vengono inserite in un array
             misurazioni.append(data.decode('utf8'))
-            
-             #Gli indirizzi dei device vengono inseriti in un array
-            indirizzi.append(address)
 
-
-            arp_table_mac = {device1IP : device1Mac, device2IP : device2Mac, device3IP : device3Mac, device4IP : device4Mac}
+            arpTableIpMac = {device1IP : device1Mac, device2IP : device2Mac, device3IP : device3Mac, device4IP : device4Mac}
             if (len(misurazioni) == 4):
                 
                 #Quando sia i 2 array (indirizzi e misurazioni) hanno ricevuto i dati
                 # dai 4 device, il gateway invia al server le informazioni
-                self.InviaMisurazioni(misurazioni, arp_table_mac)
-                arp_table_mac.clear()
+                self.InviaMisurazioni(misurazioni, arpTableIpMac)
+                arpTableIpMac.clear()
                 misurazioni = []
                 device1 = None
                 device2 = None
