@@ -30,13 +30,14 @@ class Server:
             #Il buffer di trasferimento è di 1024 byte. E' più che sufficiente
             # poichè i dati trasferiti sono relativamente pochi e quindi il 
             # rischio di riempire il buffer è molto basso
-            messaggio = socketTrasferimento.recv(4096)
-            print("Indirizzo socketTrasferimento" + str(indirizzoSocketTrasferimento))
+            messaggio = socketTrasferimento.recv(1024)
+            socketTrasferimento.send(("Rilevazione arrivata al server").encode()) #Messaggio di risposta da inviare al gateway
             print(messaggio.decode())
+            
         except:
             print("Qualcosa è andato storto nella decodifica")
             
-        #Una volta ricevuti i messaggi e mostrati a video viene chiusa la socket
-        # di trasferimento
-        socketTrasferimento.close()
+    #Una volta ricevuti i messaggi e mostrati a video viene chiusa la socket
+    # di trasferimento
+    socketTrasferimento.close()
   

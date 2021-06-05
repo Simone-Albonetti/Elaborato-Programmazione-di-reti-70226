@@ -12,14 +12,8 @@ import socket as sk
 class Device:
     "Rappresenta il dispositivo che rileva la temperatura e umidità dal terreno"
     
-    def __init__(self, clientIp, clientMac): 
-       self.client_ip = clientIp
-       self.client_mac = clientMac
-       self.gateway = ("localhost", 8100)
-       self.clientUDP = sk.socket(sk.AF_INET, sk.SOCK_DGRAM)
-
     def Orario(self):                       
-        #Questa funzione restituisce il momento in cui è avvenuta la misurazione
+        #Questa funzione restituisce il momento (ora:minuti) in cui è avvenuta la misurazione
         momento = time.localtime()  
 
         ora = momento.tm_hour
@@ -28,8 +22,8 @@ class Device:
         return(orario)
 
     def EseguiMisurazione(self):
-    #Questa funzione restituisce i dati della misurazione, dove temperatura e 
-    # umidità sono valori interi (casuali in questo caso).
+        #Questa funzione restituisce i dati della misurazione, dove temperatura e 
+        # umidità sono valori interi (casuali in questo caso).
         temperatura = random.randint(5, 40)
         umidità = random.randint(0,100)
         misurazione = "%d.%d"%(temperatura,umidità)
@@ -38,9 +32,41 @@ class Device:
     def InviaMessaggio(self):
         #Il device dopo aver eseguito la misurazione, codifica i dati e li invia
         # al gateway
-        message = self.Orario()+'.'+self.EseguiMisurazione()
-        print ('sending "%s"' % message)        
-        self.clientUDP.sendto(message.encode(), self.gateway)
         
+        message = self.Orario()+'.'+self.EseguiMisurazione()
+        print ('sending "%s"' % message)
+        gateway = ("localhost", 8100)
+        
+        
+        #Inizio a calcolare il tempo appena prima di creare la socket e inviare
+        # la misurazione
+        tinizio = time.time()
+        clientUDP = sk.socket(sk.AF_INET, sk.SOCK_DGRAM)
+        clientUDP.sendto(message.encode(), gateway)
+        
+        #Momento in cui invio il pacchetto
+        tinvio = time.time()
+        data, address = clientUDP.recvfrom(1024)
+        
+        #Momento in cui ricevo il pacchetto di risposta dal gateway
+        tricezione = time.time()
+        
+        
+        '''ATTENZIONE:
+            Il tempo che passa tra la creazione della socket e il momento in cui 
+            il pacchetto di risposta ritorna al device SPESSO è molto breve e 
+            python lo arrotonda a 0
+        '''
+        RTT = tricezione - tinvio
+        
+        #Per tempo totale si intende il tempo che passa dalla creazione della 
+        #socket, alla ricezione del pacchetto di risposta dal gateway
+        tTot = tricezione - tinizio
+                
+        print("Tempo di invio pacchetto: ", tTot)
+        print("RTT: " , RTT, "\n\n")
+        
+        clientUDP.close()
+
 
     
