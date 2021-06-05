@@ -10,7 +10,7 @@ import Device as dv
 
 #Creo il quarto device, invio la prima misurazione e, passato 1 giorno, invierà
 # una nuova misurazione 
-dev4 = dv.Device('192.168.1.92', 10000)
+dev4 = dv.Device("192.168.1.4", "AF:04:67:EF:20:DA")
 dev4.InviaMessaggio()
 
 while True:
